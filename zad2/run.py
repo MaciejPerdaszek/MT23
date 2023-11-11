@@ -1,7 +1,8 @@
 import subprocess
 
 runsParameters = [
-    ['-1', '-t 0.5', '-c 0.999', '-k 0.1', '-i 3000', '-e 7']
+    ['-1', '-t 0.5', '-c 0.999', '-k 0.1', '-i 3000', '-e 7'],
+    ['-2', '-t 0.05', '-c 0.997', '-k 0.1', '-i 1200', '-e 11']
 ]
 
 with open('output.txt', 'w') as out:
@@ -21,3 +22,4 @@ with open('output.txt', 'w') as out:
         output = process.stdout.decode("utf-8").rstrip()
         out.write(output)
         out.write(paramStr)
+        out.write('\n')
