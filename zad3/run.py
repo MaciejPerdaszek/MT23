@@ -4,14 +4,16 @@ import sys
 import genetic_algorithm
 
 argumentList = sys.argv[1:]
-options = "p:g:m:"
-long_options = ["PopulationSize=", "NumberOfGenerations=", "Roulette", "CrossoverPoints=", "MutationParameter="]
+options = "p:g:m:c:"
+long_options = ["PopulationSize=", "NumberOfGenerations=", "Roulette",
+                "CrossoverPoints=", "MutationRate=", "CrossoverRate="]
 
 population_size = None
 number_of_generations = None
 selection_method = None
 crossover_points = []
-mutation_parameter = None
+mutation_rate = None
+crossover_rate = None
 
 try:
     args, values = getopt.getopt(argumentList, options, long_options)
@@ -23,8 +25,11 @@ try:
         elif currArg in ("-g", "--NumberOfGenerations"):
             number_of_generations = int(currVal)
 
-        elif currArg in ("-m", "--MutationParameter"):
-            mutation_parameter = float(currVal)
+        elif currArg in ("-m", "--MutationRate"):
+            mutation_rate = float(currVal)
+
+        elif currArg in ("-c", "--CrossoverRate"):
+            crossover_rate = float(currVal)
 
         elif currArg in "--Roulette":
             selection_method = genetic_algorithm.roulette_selection
@@ -36,9 +41,9 @@ try:
 except getopt.error as err:
     print(str(err))
 
-if population_size and number_of_generations and mutation_parameter and selection_method and len(crossover_points) > 0:
+if population_size and number_of_generations and mutation_rate and crossover_rate and selection_method and len(crossover_points) > 0:
     objects = []
-    file = open('data.txt', 'R')
+    file = open('data.txt', 'r')
     while True:
         line = file.readline()
         if not line:
@@ -48,10 +53,13 @@ if population_size and number_of_generations and mutation_parameter and selectio
         objects.append(obj)
     file.close()
 
+    genetic_algorithm.objects = objects
+    genetic_algorithm.max_weight = 6404180
+
     with open('output.txt', 'w') as out:
-        out.write(genetic_algorithm
+        out.write(str(genetic_algorithm
                   .genetic_algorithm(population_size, number_of_generations,
-                                     selection_method, crossover_points, mutation_parameter))
+                                     selection_method, crossover_points, mutation_rate, crossover_rate)))
 
 else:
     print("Invalid arguments")
