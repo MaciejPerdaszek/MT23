@@ -5,7 +5,7 @@ import genetic_algorithm
 
 argumentList = sys.argv[1:]
 options = "p:g:m:c:"
-long_options = ["PopulationSize=", "NumberOfGenerations=", "Roulette",
+long_options = ["PopulationSize=", "NumberOfGenerations=", "Roulette", "Elitism",
                 "CrossoverPoints=", "MutationRate=", "CrossoverRate="]
 
 population_size = None
@@ -34,6 +34,9 @@ try:
         elif currArg in "--Roulette":
             selection_method = genetic_algorithm.roulette_selection
 
+        elif currArg in "--Elitism":
+            selection_method = genetic_algorithm.elitism_selection
+
         elif currArg in "--CrossoverPoints":
             string = currVal.split(',')
             for s in string:
@@ -41,7 +44,8 @@ try:
 except getopt.error as err:
     print(str(err))
 
-if population_size and number_of_generations and mutation_rate and crossover_rate and selection_method and len(crossover_points) > 0:
+if population_size and number_of_generations and mutation_rate and crossover_rate and \
+        selection_method and len(crossover_points) > 0:
     objects = []
     file = open('data.txt', 'r')
     while True:

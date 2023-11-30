@@ -1,4 +1,5 @@
 import random
+import copy
 
 objects = []
 max_weight = 0
@@ -34,19 +35,6 @@ def fitness_score_sum(population) -> int:
     return fitness_sum
 
 
-def population_probability(population) -> []:
-    probabilities = []
-    fitness_sum = fitness_score_sum(population)
-
-    for individual in population:
-        if fitness_sum != 0:
-            probabilities.append(fitness_score(individual) / fitness_sum)
-        else:
-            probabilities.append(0)
-
-    return probabilities
-
-
 def roulette_selection(population, number_of_chosen) -> []:
     selected = []
     total_fitness = fitness_score_sum(population)
@@ -66,6 +54,14 @@ def roulette_selection(population, number_of_chosen) -> []:
                     break
 
         return selected
+
+
+def elitism_selection(population, number_of_chosen) -> []:
+    selected = []
+    sorted_population = sorted(population, key=lambda x: fitness_score(x), reverse=True)
+    for i in range(number_of_chosen):
+        selected.append(sorted_population[i])
+    return selected
 
 
 def crossover(parent_a: list, parent_b: list, crossover_points: list, crossover_rate: float) -> []:
@@ -106,11 +102,6 @@ def genetic_algorithm(population_size: int, number_of_generations: int,
     best_generation = global_population
 
     for generation in range(number_of_generations):
-        current_fitness = fitness_score_sum(global_population)
-        print(current_fitness)
-        if current_fitness > best_fitness:
-            best_fitness = current_fitness
-            best_generation = global_population
 
         chosen: list = selection_method(global_population, population_size)
         children = []
@@ -133,4 +124,11 @@ def genetic_algorithm(population_size: int, number_of_generations: int,
 
         global_population = selection_method(global_population, population_size)
 
+        current_fitness = fitness_score_sum(global_population)
+        print(current_fitness)
+        if current_fitness > best_fitness:
+            best_fitness = current_fitness
+            best_generation = copy.deepcopy(global_population)
+
+    print("Return generation " + str(best_fitness) + " " + str(len(best_generation)))
     return best_generation
