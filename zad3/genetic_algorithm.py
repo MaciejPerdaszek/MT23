@@ -125,10 +125,8 @@ def genetic_algorithm(population_size: int, number_of_generations: int,
         global_population = selection_method(global_population, population_size)
 
         current_fitness = fitness_score_sum(global_population)
-        print(current_fitness)
         if current_fitness > best_fitness:
             best_fitness = current_fitness
             best_generation = copy.deepcopy(global_population)
-
-    print("Return generation " + str(best_fitness) + " " + str(len(best_generation)))
+    print(best_fitness)
     return best_generation
