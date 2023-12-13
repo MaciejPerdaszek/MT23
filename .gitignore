@@ -160,4 +160,10 @@ cython_debug/
 #.idea/
 zad2/venv/
 zad2/.idea/
+zad2/output.txt
+zad3/venv/
+zad3/.idea/
+zad3/output.txt
+zad4/venv/
+zad4/.idea/
 .idea

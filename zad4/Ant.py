@@ -24,8 +24,12 @@ class Ant:
         pass
 
     def visit_random(self):
-        rand = random.randint(0, len(self.locations.get_locations()) - 1)
-        self.visited.append(self.locations.get_locations()[rand])
+        while len(self.visited) < len(self.locations.get_locations()):
+            rand = random.randint(0, len(self.locations.get_locations()) - 1)
+            location = self.locations.get_locations()[rand]
+
+            if location not in self.visited:
+                self.visited.append(location)
 
     def visit_probabilistic(self):
         probabilities = []
@@ -33,13 +37,13 @@ class Ant:
         for location in self.locations.get_locations():
             if location not in self.visited:
                 x_pheromones = self.locations.get_pheromone(self.visited[-1], location) ** self.alpha
-                x_heuristics = 1 / Locations.distance(self.visited[-1], location) ** self.beta
+                x_heuristics = 1 / max(1e-10, Locations.distance(self.visited[-1], location) ** self.beta)
                 probability_sum += x_pheromones * x_heuristics
 
         for location in self.locations.get_locations():
             if location not in self.visited:
                 x_pheromones = self.locations.get_pheromone(self.visited[-1], location) ** self.alpha
-                x_heuristics = 1 / Locations.distance(self.visited[-1], location) ** self.beta
+                x_heuristics = 1 / max(1e-10, Locations.distance(self.visited[-1], location) ** self.beta)
                 probability = (x_pheromones * x_heuristics) / probability_sum
                 probabilities.append({'probability': probability, 'location': location})
 

@@ -1,6 +1,7 @@
 import argparse
 import Locations
 import AntColonyOptimization
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Run Ant Colony Optimization program.')
 parser.add_argument('-l', '--locations', type=str, help='Path to file with locations data.')
@@ -25,3 +26,34 @@ if (args.locations
                                          args.evaporation_rate, args.random_location_probability)
     print('Best ant distance: ' + str(best_ant.get_distance()))
     print('Best ant path: ' + str(best_ant.visited))
+
+    print('Best ant path length: ' + str(len(best_ant.visited)))
+
+
+    def display_best_ant_trail(best_ant_visited):
+        plt.figure(figsize=(8, 8))
+
+        for i in range(len(best_ant_visited) - 1):
+
+            location_start = best_ant_visited[i]
+            location_end = best_ant_visited[i + 1]
+
+            x_start, y_start = location_start['x'], location_start['y']
+            x_end, y_end = location_end['x'], location_end['y']
+            if i == 0:
+                plt.plot(x_start, y_start, marker='o', color='blue')
+            else:
+                plt.plot(x_start, y_start, marker='o', color='red')
+
+            plt.plot([x_start, x_end], [y_start, y_end], linestyle='dashed', color='gray')
+
+        last_location = best_ant_visited[-1]
+        plt.plot(last_location['x'], last_location['y'], marker='o', color='Blue')
+
+        plt.title('Trail of the best ant in the ant colony algorithm')
+        plt.xlabel('X Coordinate')
+        plt.ylabel('Y Coordinate')
+
+        plt.savefig('trail.png')
+
+    display_best_ant_trail(best_ant.visited)
