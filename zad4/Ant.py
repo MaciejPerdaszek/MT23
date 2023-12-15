@@ -59,4 +59,3 @@ class Ant:
             if rand <= cumulative_probability:
                 self.visited.append(location)
                 break
-

@@ -4,10 +4,12 @@ import Locations
 import Ant
 
 
-def get_best_ant(colony):
-    best_ant = colony[0]
+def get_best_ant(colony, previous_best_ant):
+    best_ant = previous_best_ant
     for ant in colony:
-        if ant.get_distance() < best_ant.get_distance():
+        if best_ant is None:
+            best_ant = ant
+        elif ant.get_distance() < best_ant.get_distance():
             best_ant = ant
     return best_ant
 
@@ -42,5 +44,6 @@ def run(locations: Locations.Locations, population_size: int, number_of_iteratio
                 else:
                     ant.visit_probabilistic()
         update_pheromones(locations, colony, evaporation_rate)
-        best_ant = get_best_ant(colony)
+        previous_best_ant = best_ant
+        best_ant = get_best_ant(colony, previous_best_ant)
     return best_ant
