@@ -25,22 +25,3 @@ best_generation, best_generation_fitness = genetic_algorithm(customers, vehicle_
 
 print('Best generation fitness: ' + str(best_generation_fitness))
 print('Best route distance: ' + str(best_generation.get_best_solution().distance()))
-
-'''#best_generation, best_generation_fitness = genetic_algorithm(customers, vehicle_capacity, population_size,
-#                                                             number_of_generations, mutation_rate, crossover_rate)
-
-#print('Best generation fitness: ' + str(best_generation_fitness))
-#best_routes, best_distance = get_best_routes(best_generation)
-#print('Best routes distance: ' + str(best_distance))
-#print('Best routes: ')
-#i = 0
-for route in best_routes:
-    print('Route: ' + str(i), end=' ')
-    for customer in route:
-        print(customer.id, end=' ')
-        print("X " + str(customer.x), end=' ')
-        print("Y " + str(customer.y), end=' ')
-        print('->', end=' ')
-    print()
-    i += 1
-'''
