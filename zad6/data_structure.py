@@ -44,6 +44,23 @@ class Route:
             load += customer.demand
         return capacity_penalty
 
+    def two_opt(self):
+        improved = True
+        while improved:
+            improved = False
+            for i in range(0, len(self.customers) - 1, 1):
+                pair = (self.customers[i], self.customers[i + 1])
+                route = self.customers[:]
+                route.remove(pair[0])
+                route.remove(pair[1])
+                route.insert(i, pair[1])
+                route.insert(i + 1, pair[0])
+                current_route_cost = self.distance()
+                new_route_cost = Route(route).distance()
+                if new_route_cost < current_route_cost:
+                    self.customers = route
+                    improved = True
+
 
 class IndividualSolution:
     def __init__(self, routes: [Route], allCustomers: [Customer]):
@@ -79,6 +96,10 @@ class IndividualSolution:
 
         return total_distance + time_window_penalty + capacity_penalty + unserved_customers_penalty
 
+    def two_opt(self):
+        for route in self.routes:
+            route.two_opt()
+
 
 class Population:
     def __init__(self, solutions: [IndividualSolution], allCustomers: [Customer]):
@@ -92,26 +113,26 @@ class Population:
         return fitness_sum
 
     # Roulette wheel selection
-    def selection(self, number_of_chosen) -> []:
+    def roulette_selection(self, number_of_chosen) -> []:
         selected = []
-        total_fitness = self.fitness_score_sum()
-        if total_fitness != 0:
-            fitness_values = []
-            for solution in self.solutions:
-                fitness_values.append(solution.fitness_score())
+        max_fitness = max(solution.fitness_score() for solution in self.solutions)
+        inverted_fitness_values = [max_fitness - solution.fitness_score() for solution in self.solutions]
+        total_fitness = sum(inverted_fitness_values)
 
-            selection_probabilities = [fitness / total_fitness for fitness in fitness_values]
-
-            for count in range(number_of_chosen):
-                rand_num = random.random()
-                cumulative_probability = 0
-                for i, prob in enumerate(selection_probabilities):
-                    cumulative_probability += prob
-                    if rand_num <= cumulative_probability:
-                        selected.append(self.solutions[i])
-                        break
+        for count in range(number_of_chosen):
+            rand_num = random.uniform(0, total_fitness)
+            cumulative_probability = 0
+            for i, fitness in enumerate(inverted_fitness_values):
+                cumulative_probability += fitness
+                if rand_num <= cumulative_probability:
+                    selected.append(self.solutions[i])
+                    break
 
         self.solutions = selected
+
+    def elitism_selection(self, number_of_chosen) -> []:
+        self.solutions = sorted(self.solutions, key=lambda solution: solution.fitness_score())
+        self.solutions = self.solutions[:number_of_chosen]
 
     def crossover(self, crossover_rate):
         for i in range(0, len(self.solutions), 2):
@@ -147,6 +168,10 @@ class Population:
                 customer2index = random.randint(0, len(customers) - 1)
 
                 customers[customer1index], customers[customer2index] = customers[customer2index], customers[customer1index]
+
+    def two_opt(self):
+        for solution in self.solutions:
+            solution.two_opt()
 
     def get_best_solution(self) -> IndividualSolution:
         best_solution = self.solutions[0]

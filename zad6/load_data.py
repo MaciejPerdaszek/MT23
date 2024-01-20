@@ -5,7 +5,7 @@ def __remove_additional_spaces(string: str) -> str:
     return ' '.join(string.split())
 
 
-def __get_data(file_name: str) -> []:
+def __get_customers_data(file_name: str) -> []:
     data = []
     with open('./data/' + file_name, 'r') as f:
         for line in f:
@@ -14,8 +14,18 @@ def __get_data(file_name: str) -> []:
     return data
 
 
+def get_vehicle_data() -> []:
+    data = {}
+    with open('./data/vehicle-capacity.txt', 'r') as f:
+        for line in f:
+            line.strip()
+            elements = line.split(' ')
+            data[elements[0]] = int(elements[1])
+    return data
+
+
 def get_customers_from_file(file_name: str) -> [Customer]:
-    data = __get_data(file_name)
+    data = __get_customers_data(file_name)
     customers = []
     for line in data:
         line = line.split(' ')

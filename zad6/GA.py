@@ -4,7 +4,9 @@ from VRPTW import VRPTW
 
 
 def genetic_algorithm(customers, vehicle_capacity, population_size,
-                      number_of_generations, mutation_rate, crossover_rate):
+                      number_of_generations, mutation_rate, crossover_rate,
+                      use_two_opt,
+                      selection):
     lib = VRPTW(population_size, vehicle_capacity, customers)
     population = lib.population
 
@@ -13,9 +15,19 @@ def genetic_algorithm(customers, vehicle_capacity, population_size,
 
     for generation in range(number_of_generations):
         print('Generation: ' + str(generation))
+
         population.crossover(crossover_rate)
+
         population.mutation(mutation_rate)
-        population.selection(population_size)
+
+        if selection == 'roulette':
+            population.roulette_selection(population_size)
+        elif selection == 'elitism':
+            population.elitism_selection(population_size)
+
+        if use_two_opt:
+            population.two_opt()
+
 
         current_generation_fitness = population.fitness_score_sum()
         if current_generation_fitness < best_generation_fitness:
