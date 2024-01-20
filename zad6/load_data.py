@@ -1,4 +1,4 @@
-from zad6.data_structure import Customer
+from data_structure import Customer
 
 
 def __remove_additional_spaces(string: str) -> str:

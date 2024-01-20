@@ -1,13 +1,14 @@
 import random
 
-from zad6.data_structure import Population, Route, Customer, IndividualSolution
+from data_structure import Population, Route, Customer, IndividualSolution
 
 
 class VRPTW:
-    def __init__(self, population_size, vehicle_capacity, customers: [Customer]):
+    def __init__(self, population_size, vehicle_capacity, nv, customers: [Customer]):
         self.vehicle_capacity = vehicle_capacity
         self.population_size = population_size
         self.customers = customers
+        self.nv = nv
 
         self.population = self.initialize_population()
 
@@ -15,19 +16,17 @@ class VRPTW:
         initial_solutions = []
         for _ in range(self.population_size):
             remaining_customers = self.customers[:]
-            routes_list = []
-            while len(remaining_customers) > 0:
-                customer_list = []
-                load = 0
-                while load < self.vehicle_capacity and len(remaining_customers) > 0:
-                    customer = random.choice(remaining_customers)
-                    if load + customer.demand <= self.vehicle_capacity:
-                        customer_list.append(customer)
-                        load += customer.demand
-                        remaining_customers.remove(customer)
-                    else:
-                        if all(c.demand + load > self.vehicle_capacity for c in remaining_customers):
-                            break
-                routes_list.append(Route(customer_list))
-            initial_solutions.append(IndividualSolution(routes_list, self.customers))
+            routes = [Route([], self.vehicle_capacity) for _ in range(self.nv)]
+            r_index = 0
+            while True:
+                if len(remaining_customers) == 0:
+                    break
+                route = routes[r_index]
+                customer = random.choice(remaining_customers)
+                route.customers.append(customer)
+                remaining_customers.remove(customer)
+                r_index += 1
+                if r_index == self.nv:
+                    r_index = 0
+            initial_solutions.append(IndividualSolution(routes, self.customers))
         return Population(initial_solutions, self.customers)

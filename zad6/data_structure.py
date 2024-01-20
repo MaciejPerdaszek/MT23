@@ -17,8 +17,9 @@ class Customer:
 
 
 class Route:
-    def __init__(self, customers: [Customer]):
+    def __init__(self, customers: [Customer], vehicle_capacity):
         self.customers = customers
+        self.vehicle_capacity = vehicle_capacity
 
     def distance(self) -> float:
         distance = 0
@@ -42,6 +43,8 @@ class Route:
         load = 0
         for customer in self.customers:
             load += customer.demand
+            if load > self.vehicle_capacity:
+                capacity_penalty += load - self.vehicle_capacity
         return capacity_penalty
 
     def two_opt(self):
@@ -56,7 +59,7 @@ class Route:
                 route.insert(i, pair[1])
                 route.insert(i + 1, pair[0])
                 current_route_cost = self.distance()
-                new_route_cost = Route(route).distance()
+                new_route_cost = Route(route, self.vehicle_capacity).distance()
                 if new_route_cost < current_route_cost:
                     self.customers = route
                     improved = True
@@ -99,6 +102,12 @@ class IndividualSolution:
     def two_opt(self):
         for route in self.routes:
             route.two_opt()
+
+    def get_unserved_customers_number(self) -> int:
+        served_customers = []
+        for route in self.routes:
+            served_customers += route.customers
+        return len(self.allCustomers) - len(served_customers)
 
 
 class Population:
@@ -163,11 +172,14 @@ class Population:
         for solution in self.solutions:
             if random.random() < mutation_rate:
                 route = random.choice(solution.routes)
+                if len(route.customers) <= 1:
+                    continue
                 customers = route.customers
                 customer1index = random.randint(0, len(customers) - 1)
                 customer2index = random.randint(0, len(customers) - 1)
 
-                customers[customer1index], customers[customer2index] = customers[customer2index], customers[customer1index]
+                customers[customer1index], customers[customer2index] = customers[customer2index], customers[
+                    customer1index]
 
     def two_opt(self):
         for solution in self.solutions:

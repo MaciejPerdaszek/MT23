@@ -1,9 +1,9 @@
 import argparse
 import random
 
-from zad6.data_structure import IndividualSolution
-from zad6.load_data import get_customers_from_file, get_vehicle_data
-from zad6.GA import genetic_algorithm
+from data_structure import IndividualSolution
+from load_data import get_customers_from_file, get_vehicle_data
+from GA import genetic_algorithm
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Zad 6')
@@ -15,9 +15,9 @@ parser.add_argument('-c', '--crossover', type=float, required=True, help='Crosso
 parser.add_argument('-t', '--two-opt', action='store_true', help='Use two opt')
 parser.add_argument('-r', '--roulette', action='store_true', help='Use roulette selection')
 parser.add_argument('-e', '--elitism', action='store_true', help='Use elitism selection')
+parser.add_argument('-nv', '--number-of-vehicles', type=int, required=True, help='Number of vehicles')
 
 args = parser.parse_args()
-
 
 file_name = args.file
 population_size = args.population
@@ -25,6 +25,7 @@ number_of_generations = args.generations
 mutation_rate = args.mutation
 crossover_rate = args.crossover
 use_two_opt = args.two_opt
+nv = args.number_of_vehicles
 
 customers = get_customers_from_file(file_name)
 vehicle_data = get_vehicle_data()
@@ -39,14 +40,15 @@ else:
     print('You have to choose selection method')
     exit(1)
 
-
-best_generation, best_generation_fitness = genetic_algorithm(customers, vehicle_capacity, population_size,
+best_generation, best_generation_fitness = genetic_algorithm(customers, vehicle_capacity, nv, population_size,
                                                              number_of_generations, mutation_rate, crossover_rate,
                                                              use_two_opt,
                                                              selection)
 
-print('Best generation fitness: ' + str(best_generation_fitness))
-print('Best route distance: ' + str(best_generation.get_best_solution().distance()))
+# print('Best generation fitness: ' + str(best_generation_fitness))
+print("")
+print('Distance: ' + str(round(best_generation.get_best_solution().distance(), 2)))
+print('NV: ' + str(len(best_generation.get_best_solution().routes)))
 
 
 def generate_solution_plot(solution: IndividualSolution):
@@ -74,5 +76,4 @@ def generate_solution_plot(solution: IndividualSolution):
 
     plt.show()
 
-
-generate_solution_plot(best_generation.get_best_solution())
+#generate_solution_plot(best_generation.get_best_solution())
